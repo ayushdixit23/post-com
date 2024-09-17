@@ -18,7 +18,7 @@ const PostSchema = new mongoose.Schema(
     isverified: { type: Boolean, default: false },
     commpic: { type: ObjectId, ref: "Community" },
     isPromoted: { type: Boolean, default: false },
-    promoid: { type: ObjectId, ref: "Post" },
+    // promoid: { type: ObjectId, ref: "Post" },
     topicId: { type: ObjectId, ref: "Topic" },
     post: [
       {
