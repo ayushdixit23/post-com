@@ -121,19 +121,28 @@ const compressedVideo = async (videoKey) => {
     // Save the video from S3 to a temp file
     fs.writeFileSync(tempInputPath, buffer);
 
-    // Compress the video using ffmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(tempInputPath)
-        .output(tempOutputPath)
+        .videoCodec('libx264')
+        .outputOptions('-crf', '28') // Reduce quality to approximately 75%
+        .outputOptions('-preset', 'medium') // Balance compression speed and file size
+        .videoFilters('scale=iw*0.75:ih*0.75') // Resize video to 75% of original width and height
+        .outputOptions('-b:v', '1M') // Set video bitrate (optional for fine-tuning)
+        .outputOptions('-maxrate', '1M') // Set max bitrate
+        .outputOptions('-bufsize', '2M') // Buffer size for rate control
+        .outputOptions('-b:a', '128k') // Set audio bitrate
+        .on('start', (commandLine) => {
+          console.log('FFmpeg command:', commandLine);
+        })
         .on('end', () => {
-          console.log(`Video compressed successfully: ${tempOutputPath}`);
+          console.log('FFmpeg processing finished.');
           resolve();
         })
         .on('error', (err) => {
-          console.error('Error compressing video:', err);
+          console.error('FFmpeg error:', err);
           reject(err);
         })
-        .run();
+        .save(tempOutputPath);
     });
 
     // Read the compressed video and upload it back to S3
@@ -173,7 +182,7 @@ const fetchMedia = async () => {
 
     const posts = await Post.find();  // Assuming `Post.find()` is correct
 
-    for (let j = 68; j < posts.length; j++) {
+    for (let j = 1728; j < posts.length; j++) {
       console.log(j, posts[j].title, posts[j]._id);
       const medias = posts[j]?.post?.map((d) => ({
         content: d?.content,
