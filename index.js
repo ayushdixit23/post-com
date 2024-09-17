@@ -451,26 +451,3 @@ async function compressImageFromS3(key) {
 //     throw err;
 //   }
 // }
-
-const findPos = async () => {
-  try {
-    const posts = await Post.find()
-
-    for (const post of posts) {
-      // console.log(post._id, post.promoid)
-
-
-      post.promoid = undefined
-      await post.save()
-      console.log("first")
-
-
-    }
-
-    console.log("domme")
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-// findPos()
