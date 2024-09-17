@@ -182,7 +182,7 @@ const fetchMedia = async () => {
 
     const posts = await Post.find();  // Assuming `Post.find()` is correct
 
-    for (let j = 1728; j < posts.length; j++) {
+    for (let j = 69; j < posts.length; j++) {
       console.log(j, posts[j].title, posts[j]._id);
       const medias = posts[j]?.post?.map((d) => ({
         content: d?.content,
